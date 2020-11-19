@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'cc.chen.blog'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.bouncycastle:bcprov-jdk15to18:1.67'
+    compile 'org.bouncycastle:bcpkix-jdk15to18:1.67'
+    compile 'com.alibaba:fastjson:1.2.73'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
