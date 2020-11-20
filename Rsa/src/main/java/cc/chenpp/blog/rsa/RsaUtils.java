@@ -30,7 +30,6 @@ import java.util.Base64;
 public class RsaUtils {
 
     private static final String KEY_ALGORITHM = "RSA";
-    private static final String SIGN_ALGORITHM = "SHA1WithRSA ";
 
     static {
         // 处理 NoSuchProviderException: no such provider: BC 异常
@@ -110,91 +109,91 @@ public class RsaUtils {
         return encryptionByKey(data, privateKey);
     }
 
-    /**
-     * 使用秘钥对字符串进行加密并返回Base64编码字符串
-     *
-     * @param data
-     * @param key
-     * @return
-     */
-    private static String encryptionByKey(String data, Key key) {
-        try {
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
-            int maxEncryptBlock = ((RSAKey) key).getModulus().bitLength() / 8 - 11;
-            byte[] bytes = splitBytesHandle(cipher, dataBytes, maxEncryptBlock);
-            byte[] encode = Base64.getEncoder().encode(bytes);
-            return new String(encode, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            return null;
+/**
+ * 使用秘钥对字符串进行加密并返回Base64编码字符串
+ *
+ * @param data
+ * @param key
+ * @return
+ */
+private static String encryptionByKey(String data, Key key) {
+    try {
+        Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+        int maxEncryptBlock = ((RSAKey) key).getModulus().bitLength() / 8 - 11;
+        byte[] bytes = splitBytesHandle(cipher, dataBytes, maxEncryptBlock);
+        byte[] encode = Base64.getEncoder().encode(bytes);
+        return new String(encode, StandardCharsets.UTF_8);
+    } catch (Exception e) {
+        return null;
+    }
+}
+
+/**
+ * 对Base64字符串进行解码并使用私钥解密
+ *
+ * @param data
+ * @param privateKey
+ * @return 解密失败返回null
+ */
+public static String decryption(String data, PrivateKey privateKey) {
+    return decryptionByKey(data, privateKey);
+}
+
+/**
+ * 对Base64字符串进行解码并使用公钥解密
+ *
+ * @param data
+ * @param publicKey
+ * @return 解密失败返回null
+ */
+public static String decryptionByPublicKey(String data, PublicKey publicKey) {
+    return decryptionByKey(data, publicKey);
+}
+
+/**
+ * 对Base64字符串进行解码并使用秘钥解密
+ *
+ * @param data
+ * @param key
+ * @return 解密失败返回null
+ */
+private static String decryptionByKey(String data, Key key) {
+    try {
+        Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] dataBytes = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
+        int maxDecryptBlock = ((RSAKey) key).getModulus().bitLength() / 8;
+        byte[] bytes = splitBytesHandle(cipher, dataBytes, maxDecryptBlock);
+        return new String(bytes, StandardCharsets.UTF_8);
+    } catch (Exception e) {
+        return null;
+    }
+}
+
+/**
+ * 分段加解密
+ *
+ * @param cipher
+ * @param dataBytes
+ * @param maxDecryptBlock
+ * @return
+ * @throws IOException
+ * @throws BadPaddingException
+ * @throws IllegalBlockSizeException
+ */
+private static byte[] splitBytesHandle(Cipher cipher, byte[] dataBytes, int maxDecryptBlock) throws IOException, BadPaddingException, IllegalBlockSizeException {
+    try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        int length = dataBytes.length;
+        for (int i = 0; i < length; i += maxDecryptBlock) {
+            int inputLen = i + maxDecryptBlock < length ? maxDecryptBlock : length - i;
+            byte[] doFinalBytes = cipher.doFinal(dataBytes, i, inputLen);
+            out.write(doFinalBytes, 0, doFinalBytes.length);
         }
+        return out.toByteArray();
     }
-
-    /**
-     * 对Base64字符串进行解码并使用私钥解密
-     *
-     * @param data
-     * @param privateKey
-     * @return 解密失败返回null
-     */
-    public static String decryption(String data, PrivateKey privateKey) {
-        return decryptionByKey(data, privateKey);
-    }
-
-    /**
-     * 对Base64字符串进行解码并使用公钥解密
-     *
-     * @param data
-     * @param publicKey
-     * @return 解密失败返回null
-     */
-    public static String decryptionByPublicKey(String data, PublicKey publicKey) {
-        return decryptionByKey(data, publicKey);
-    }
-
-    /**
-     * 对Base64字符串进行解码并使用秘钥解密
-     *
-     * @param data
-     * @param key
-     * @return 解密失败返回null
-     */
-    private static String decryptionByKey(String data, Key key) {
-        try {
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] dataBytes = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
-            int maxDecryptBlock = ((RSAKey) key).getModulus().bitLength() / 8;
-            byte[] bytes = splitBytesHandle(cipher, dataBytes, maxDecryptBlock);
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * 分段加解密
-     *
-     * @param cipher
-     * @param dataBytes
-     * @param maxDecryptBlock
-     * @return
-     * @throws IOException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     */
-    private static byte[] splitBytesHandle(Cipher cipher, byte[] dataBytes, int maxDecryptBlock) throws IOException, BadPaddingException, IllegalBlockSizeException {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            int length = dataBytes.length;
-            for (int i = 0; i < length; i += maxDecryptBlock) {
-                int inputLen = i + maxDecryptBlock < length ? maxDecryptBlock : length - i;
-                byte[] doFinalBytes = cipher.doFinal(dataBytes, i, inputLen);
-                out.write(doFinalBytes, 0, doFinalBytes.length);
-            }
-            return out.toByteArray();
-        }
-    }
+}
 
     /**
      * 对数据进行签名操作
@@ -227,7 +226,7 @@ public class RsaUtils {
      * @return
      */
     public static String dataSign(Object data, PrivateKey privateKey) {
-        return dataSign(data, privateKey, SIGN_ALGORITHM);
+        return dataSign(data, privateKey, privateKey.getAlgorithm());
     }
 
     /**
@@ -260,7 +259,7 @@ public class RsaUtils {
      * @return
      */
     public static boolean checkSign(Object data, String sign, PublicKey publicKey) {
-        return checkSign(data, sign, publicKey, SIGN_ALGORITHM);
+        return checkSign(data, sign, publicKey, publicKey.getAlgorithm());
     }
 
 }

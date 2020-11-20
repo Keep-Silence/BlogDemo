@@ -109,10 +109,10 @@ public class RsaMain {
             put("age", "22");
         }};
         System.out.printf("需要加签的数据：%s\n", data);
-        String sign = RsaUtils.dataSign(data, privateKey, "SHA1WithRSA");
+        String sign = RsaUtils.dataSign(data, privateKey);
         System.out.printf("加签结果：%s\n", sign);
         System.out.println("公钥验签：");
-        System.out.printf("验签结果：%s\n", RsaUtils.checkSign(data, sign, publicKey, "SHA1WithRSA"));
+        System.out.printf("验签结果：%s\n", RsaUtils.checkSign(data, sign, publicKey));
 
         System.out.println();
         System.out.println("PKCS1格式，私钥加密、公钥解密：");
