@@ -87,20 +87,20 @@ public class RsaMain {
 
         String strJoin = String.join("", Collections.nCopies(50, "测试"));
         System.out.println("PKCS8格式加解密：");
-        System.out.printf("待加密字符串：%s\n", strJoin);
+        System.out.printf("\t待加密字符串：%s\n", strJoin);
         String encryption = RsaUtils.encryption(strJoin, publicKey);
-        System.out.printf("加密后Base64：%s\n", encryption);
-        System.out.printf("解密后字符串：%s\n", RsaUtils.decryption(encryption, privateKey));
+        System.out.printf("\t加密后Base64：%s\n", encryption);
+        System.out.printf("\t解密后字符串：%s\n", RsaUtils.decryption(encryption, privateKey));
 
         System.out.println();
         publicKey = RsaUtils.getPublicKey(pkcs1publicKeyStr);
         privateKey = RsaUtils.getPkcs1PrivateKey(pkcs1PrivateKeyStr);
 
         System.out.println("PKCS1格式加解密：");
-        System.out.printf("待加密字符串：%s\n", strJoin);
+        System.out.printf("\t待加密字符串：%s\n", strJoin);
         encryption = RsaUtils.encryption(strJoin, publicKey);
-        System.out.printf("加密后Base64：%s\n", encryption);
-        System.out.printf("解密后字符串：%s\n", RsaUtils.decryption(encryption, privateKey));
+        System.out.printf("\t加密后Base64：%s\n", encryption);
+        System.out.printf("\t解密后字符串：%s\n", RsaUtils.decryption(encryption, privateKey));
 
         System.out.println();
         System.out.println("私钥加签：");
@@ -108,18 +108,18 @@ public class RsaMain {
             put("name", "Test");
             put("age", "22");
         }};
-        System.out.printf("需要加签的数据：%s\n", data);
+        System.out.printf("\t需要加签的数据：%s\n", data);
         String sign = RsaUtils.dataSign(data, privateKey);
-        System.out.printf("加签结果：%s\n", sign);
+        System.out.printf("\t加签结果：%s\n", sign);
         System.out.println("公钥验签：");
-        System.out.printf("验签结果：%s\n", RsaUtils.checkSign(data, sign, publicKey));
+        System.out.printf("\t验签结果：%s\n", RsaUtils.checkSign(data, sign, publicKey));
 
         System.out.println();
         System.out.println("PKCS1格式，私钥加密、公钥解密：");
-        System.out.printf("待加密字符串：%s\n", strJoin);
+        System.out.printf("\t待加密字符串：%s\n", strJoin);
         encryption = RsaUtils.encryptionByPrivateKey(strJoin, privateKey);
-        System.out.printf("加密后Base64：%s\n", encryption);
-        System.out.printf("解密后字符串：%s\n", RsaUtils.decryptionByPublicKey(encryption, publicKey));
+        System.out.printf("\t加密后Base64：%s\n", encryption);
+        System.out.printf("\t解密后字符串：%s\n", RsaUtils.decryptionByPublicKey(encryption, publicKey));
     }
 
 }
