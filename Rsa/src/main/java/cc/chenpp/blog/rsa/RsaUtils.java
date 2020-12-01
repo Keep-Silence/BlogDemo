@@ -219,7 +219,6 @@ private static byte[] splitBytesHandle(Cipher cipher, byte[] dataBytes, int maxD
 
     /**
      * 对数据进行签名操作
-     * 使用此重载貌似会导致 NoSuchAlgorithmException 异常
      *
      * @param data
      * @param privateKey
@@ -252,7 +251,6 @@ private static byte[] splitBytesHandle(Cipher cipher, byte[] dataBytes, int maxD
 
     /**
      * 对数据及Sign进行验签操作
-     * 使用此重载貌似会导致 NoSuchAlgorithmException 异常
      *
      * @param data
      * @param publicKey
