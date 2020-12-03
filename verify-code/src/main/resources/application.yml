@@ -11,3 +11,7 @@ spring:
 
   application:
     name: verify-code
+
+  output:
+    ansi:
+      enabled: always
