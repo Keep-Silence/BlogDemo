@@ -1,2 +1,13 @@
 server:
   port: 8088
+spring:
+#  cloud:
+#    sentinel:
+#      eager: true
+#      transport:
+#        port: 8720
+#        dashboard: 127.0.0.1:8080
+#        heartbeat-interval-ms: 500
+
+  application:
+    name: verify-code

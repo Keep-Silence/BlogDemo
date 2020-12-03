@@ -11,20 +11,20 @@ import javax.servlet.http.HttpSession;
 @Log4j2
 public class VerifyCodeInterceptor implements HandlerInterceptor {
 
-    public final static String IMG_CODE_NAME = "imgCode";
+    public final static String VERIFY_CODE_NAME = "verifyCode";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
-        String imgCode = (String) session.getAttribute(IMG_CODE_NAME);
-        String reqImgCode = request.getParameter(IMG_CODE_NAME);
+        String imgCode = (String) session.getAttribute(VERIFY_CODE_NAME);
+        String reqImgCode = request.getParameter(VERIFY_CODE_NAME);
         if (imgCode == null || reqImgCode == null) {
             throw new CodeVerifyFailException();
         } else {
             if (!imgCode.equals(reqImgCode)) {
                 throw new CodeVerifyFailException();
             }
-            session.removeAttribute(IMG_CODE_NAME);
+            session.removeAttribute(VERIFY_CODE_NAME);
         }
         return true;
     }
