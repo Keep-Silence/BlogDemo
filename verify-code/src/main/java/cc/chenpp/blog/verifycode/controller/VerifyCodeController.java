@@ -1,19 +1,14 @@
 package cc.chenpp.blog.verifycode.controller;
 
-import cc.chenpp.blog.verifycode.config.VerifyCodeInterceptor;
-import cc.chenpp.blog.verifycode.enums.VerifyTypeEnum;
+import cc.chenpp.blog.verifycode.model.VerifyCode;
+import cc.chenpp.blog.verifycode.model.VerifyTypeEnum;
+import cc.chenpp.blog.verifycode.send.VerifyCodeService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 @Log4j2
 @RestController
@@ -21,41 +16,22 @@ import java.io.IOException;
 public class VerifyCodeController {
 
     @Resource
+    VerifyCodeService<VerifyCode> verifyCodeService;
+
+    @Resource
     DefaultKaptcha defaultKaptcha;
 
     @GetMapping("/getVerifyCode")
-    public void getCode(@RequestParam(defaultValue = "IMG") VerifyTypeEnum verifyType, HttpServletResponse response, HttpSession session) throws IOException {
+    public void getCode(@RequestParam(defaultValue = "IMG") VerifyTypeEnum verifyType) throws Exception {
         String codeText = defaultKaptcha.createText();
-        switch (verifyType) {
-            case SMS:
-                log.info("session: {} -> sms code: {}", session.getId(), codeText);
-                break;
-            case EMAIL:
-                log.info("session: {} -> email code: {}", session.getId(), codeText);
-                break;
-            default:
-                BufferedImage bi = defaultKaptcha.createImage(codeText);
-                //禁止缓存
-                response.setDateHeader("Expires", 0);
-                response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-                response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-                response.setHeader("Pragma", "no-cache");
-                //设置响应格式为png图片
-                response.setContentType("image/png");
-                // 写入图片验证码
-                try (ServletOutputStream out = response.getOutputStream()) {
-                    ImageIO.write(bi, "png", out);
-                    out.flush();
-                }
-                log.info("session: {} -> image code: {}", session.getId(), codeText);
-        }
-        session.setAttribute(VerifyCodeInterceptor.VERIFY_CODE_NAME, codeText);
+        VerifyCode verifyCode = new VerifyCode(verifyType, codeText);
+        verifyCodeService.send(verifyCode);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/testVerifyCode")
     @ResponseBody
     public String login() {
-        return "登录成功";
+        return "验证成功";
     }
 
 }

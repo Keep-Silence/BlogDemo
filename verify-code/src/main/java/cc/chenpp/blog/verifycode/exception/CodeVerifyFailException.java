@@ -6,4 +6,7 @@ public class CodeVerifyFailException extends RuntimeException {
         super("验证失败");
     }
 
+    public CodeVerifyFailException(String message) {
+        super(message);
+    }
 }

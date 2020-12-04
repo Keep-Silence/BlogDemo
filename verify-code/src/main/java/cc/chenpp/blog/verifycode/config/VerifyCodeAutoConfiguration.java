@@ -1,14 +1,45 @@
 package cc.chenpp.blog.verifycode.config;
 
+import cc.chenpp.blog.verifycode.model.VerifyCode;
+import cc.chenpp.blog.verifycode.send.EmailVerifyCodeSend;
+import cc.chenpp.blog.verifycode.send.ImgVerifyCodeSend;
+import cc.chenpp.blog.verifycode.send.SmsVerifyCodeSend;
+import cc.chenpp.blog.verifycode.send.VerifyCodeService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
 @Configuration
-public class KaptchaConfig {
+public class VerifyCodeAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(ImgVerifyCodeSend.class)
+    public ImgVerifyCodeSend imgVerifyCodeSend() {
+        return new ImgVerifyCodeSend();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(SmsVerifyCodeSend.class)
+    public SmsVerifyCodeSend smsVerifyCodeSend() {
+        return new SmsVerifyCodeSend();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(EmailVerifyCodeSend.class)
+    public EmailVerifyCodeSend emailVerifyCodeSend() {
+        return new EmailVerifyCodeSend();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(VerifyCodeService.class)
+    public <T extends VerifyCode> VerifyCodeService<T> verifyCodeSendService() {
+        return new VerifyCodeService<>();
+    }
+
     @Bean
     public DefaultKaptcha defaultKaptcha() {
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();

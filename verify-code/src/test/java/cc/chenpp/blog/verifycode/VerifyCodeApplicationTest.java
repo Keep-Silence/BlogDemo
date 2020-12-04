@@ -1,13 +1,12 @@
 package cc.chenpp.blog.verifycode;
 
-import cc.chenpp.blog.verifycode.enums.VerifyTypeEnum;
-import cc.chenpp.blog.verifycode.model.VerifyCode;
-import cc.chenpp.blog.verifycode.send.SmsVerifyCodeSend;
+import cc.chenpp.blog.verifycode.send.VerifyCodeSend;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @SpringBootTest
 public class VerifyCodeApplicationTest {
@@ -15,12 +14,10 @@ public class VerifyCodeApplicationTest {
     @Resource
     ApplicationContext applicationContext;
 
-
     @Test
     void contextLoads() {
-        VerifyCode verifyCode = new VerifyCode(VerifyTypeEnum.SMS, "1234" );
-        SmsVerifyCodeSend bean = applicationContext.getBean(SmsVerifyCodeSend.class);
-        bean.send(verifyCode);
+        Map<String, VerifyCodeSend> beansOfType = applicationContext.getBeansOfType(VerifyCodeSend.class);
+        System.out.println(beansOfType.size());
     }
 
 }
