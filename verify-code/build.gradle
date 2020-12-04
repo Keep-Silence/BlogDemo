@@ -9,6 +9,7 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     implementation 'com.github.penggle:kaptcha:2.3.2'
+//    阿里Sentinel限流组件
 //    implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel:2.2.3.RELEASE'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'

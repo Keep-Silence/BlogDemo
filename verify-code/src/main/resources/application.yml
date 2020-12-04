@@ -1,6 +1,7 @@
 server:
   port: 8088
 spring:
+#  sentinel QPS测试配置
 #  cloud:
 #    sentinel:
 #      eager: true
